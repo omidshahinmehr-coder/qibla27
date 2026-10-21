@@ -26,6 +26,9 @@ import com.qibla.prayertimes.R
 import com.qibla.prayertimes.data.WidgetDataStore
 import com.qibla.prayertimes.data.WidgetSnapshot
 import com.qibla.prayertimes.data.prayerLabels
+import com.qibla.prayertimes.util.BidiText
+import com.qibla.prayertimes.util.Digits
+import com.qibla.prayertimes.util.JalaliCalendar
 import com.qibla.prayertimes.util.LocalePrefs
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,8 +81,14 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
 
             val countdown = nextPrayerCountdown(snapshot.timings)
             val weekdayName = weekdayName(language)
-            val gregorianText = formatGregorian(langContext, snapshot.gregorianDateKey)
-            val jalaliWithWeekday = listOf(weekdayName, snapshot.jalaliText).filter { it.isNotBlank() }.joinToString(" ")
+            val gregorianText = BidiText.forLanguage(formatGregorian(langContext, snapshot.gregorianDateKey), language)
+            // Built here (not read from the cached snapshot) so the month name follows the in-app
+            // language and the date can't go stale after midnight.
+            val jalaliWithWeekday = BidiText.forLanguage(
+                listOf(weekdayName, JalaliCalendar.today().format(language)).filter { it.isNotBlank() }.joinToString(" "),
+                language
+            )
+            val hijriDisplayText = BidiText.forLanguage(snapshot.hijriText, language)
 
             val clockBlock: @Composable () -> Unit = {
                 AndroidRemoteViews(RemoteViews(langContext.packageName, R.layout.widget_clock))
@@ -94,7 +103,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                         ),
                         style = TextStyle(
                             color = goldText,
-                            fontSize = fixedSp(16f),
+                            fontSize = fixedSp(17f),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         ),
@@ -108,7 +117,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                     text = jalaliWithWeekday,
                     style = TextStyle(
                         color = goldText,
-                        fontSize = fixedSp(16f),
+                        fontSize = fixedSp(17f),
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
                     ),
@@ -131,7 +140,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                             text = staticDuration(countdown.second),
                             style = TextStyle(
                                 color = goldText,
-                                fontSize = fixedSp(16f),
+                                fontSize = fixedSp(17f),
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
                             ),
@@ -166,7 +175,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                             text = snapshot.cityName,
                             style = TextStyle(
                                 color = goldText,
-                                fontSize = fixedSp(16f),
+                                fontSize = fixedSp(17f),
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.End
                             ),
@@ -199,10 +208,10 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
             ) {
 
                 Text(
-                    text = snapshot.hijriText,
+                    text = hijriDisplayText,
                     style = TextStyle(
                         color = goldText,
-                        fontSize = fixedSp(16f)
+                        fontSize = fixedSp(17f)
                     ),
                     modifier = GlanceModifier.padding(4.dp)
                 )
@@ -211,7 +220,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                     text = "-",
                     style = TextStyle(
                         color = goldText,
-                        fontSize = fixedSp(16f)
+                        fontSize = fixedSp(17f)
                     ),
                     modifier = GlanceModifier.padding(horizontal = 4.dp)
                 )
@@ -220,7 +229,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                     text = gregorianText,
                     style = TextStyle(
                         color = goldText,
-                        fontSize = fixedSp(16f)
+                        fontSize = fixedSp(17f)
                     ),
                     modifier = GlanceModifier.padding(4.dp)
                 )
@@ -249,7 +258,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
             ) {
                 widgetPrayerKeys.forEachIndexed { index, key ->
                     if (index > 0) Spacer(modifier = GlanceModifier.width(4.dp))
-                    PrayerCell(label = labels[key] ?: key, time = snapshot.timings[key] ?: "--:--")
+                    PrayerCell(label = labels[key] ?: key, time = Digits.localize(snapshot.timings[key] ?: "--:--", language))
                 }
             }
 
@@ -267,7 +276,7 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                 text = langContext.getString(R.string.widget_open_app_hint),
                 style = TextStyle(
                     color = faintGoldText,
-                    fontSize = fixedSp(11f),
+                    fontSize = fixedSp(12f),
                     textAlign = TextAlign.Center
                 )
             )
@@ -297,7 +306,7 @@ private fun PrayerCell(label: String, time: String) {
                 text = label,
                 style = TextStyle(
                     color = goldText,
-                    fontSize = fixedSp(11f),
+                    fontSize = fixedSp(12f),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -307,7 +316,7 @@ private fun PrayerCell(label: String, time: String) {
                 text = time,
                 style = TextStyle(
                     color = goldText,
-                    fontSize = fixedSp(15f),
+                    fontSize = fixedSp(16f),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
