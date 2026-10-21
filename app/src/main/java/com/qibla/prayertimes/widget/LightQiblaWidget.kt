@@ -26,6 +26,9 @@ import com.qibla.prayertimes.R
 import com.qibla.prayertimes.data.WidgetDataStore
 import com.qibla.prayertimes.data.WidgetSnapshot
 import com.qibla.prayertimes.data.prayerLabels
+import com.qibla.prayertimes.util.BidiText
+import com.qibla.prayertimes.util.Digits
+import com.qibla.prayertimes.util.JalaliCalendar
 import com.qibla.prayertimes.util.LocalePrefs
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -134,7 +137,7 @@ private fun LightWidgetContent(langContext: Context, snapshot: WidgetSnapshot?) 
                     config.locale.language
 
             val weekday = weekdayName(language)
-            val jalaliFull = "$weekday ${snapshot.jalaliText}"
+            val jalaliFull = BidiText.forLanguage("$weekday ${JalaliCalendar.today().format(language)}", language)
 
             Text(
                 text = jalaliFull,
@@ -154,11 +157,11 @@ private fun LightWidgetContent(langContext: Context, snapshot: WidgetSnapshot?) 
                 modifier = GlanceModifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Horizontal.CenterHorizontally
             ) {
-                LightCell(labels["Fajr"] ?: "Fajr", snapshot.timings["Fajr"] ?: "--:--")
+                LightCell(labels["Fajr"] ?: "Fajr", Digits.localize(snapshot.timings["Fajr"] ?: "--:--", language))
                 Spacer(modifier = GlanceModifier.width(4.dp))
-                LightCell(labels["Sunrise"] ?: "Sunrise", snapshot.timings["Sunrise"] ?: "--:--")
+                LightCell(labels["Sunrise"] ?: "Sunrise", Digits.localize(snapshot.timings["Sunrise"] ?: "--:--", language))
                 Spacer(modifier = GlanceModifier.width(4.dp))
-                LightCell(labels["Dhuhr"] ?: "Dhuhr", snapshot.timings["Dhuhr"] ?: "--:--")
+                LightCell(labels["Dhuhr"] ?: "Dhuhr", Digits.localize(snapshot.timings["Dhuhr"] ?: "--:--", language))
             }
 
             Spacer(modifier = GlanceModifier.height(4.dp))
@@ -168,11 +171,11 @@ private fun LightWidgetContent(langContext: Context, snapshot: WidgetSnapshot?) 
                 modifier = GlanceModifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Horizontal.CenterHorizontally
             ) {
-                LightCell(labels["Sunset"] ?: "Sunset", snapshot.timings["Sunset"] ?: "--:--")
+                LightCell(labels["Sunset"] ?: "Sunset", Digits.localize(snapshot.timings["Sunset"] ?: "--:--", language))
                 Spacer(modifier = GlanceModifier.width(4.dp))
-                LightCell(labels["Maghrib"] ?: "Maghrib", snapshot.timings["Maghrib"] ?: "--:--")
+                LightCell(labels["Maghrib"] ?: "Maghrib", Digits.localize(snapshot.timings["Maghrib"] ?: "--:--", language))
                 Spacer(modifier = GlanceModifier.width(4.dp))
-                LightCell(labels["Midnight"] ?: "Midnight", snapshot.timings["Midnight"] ?: "--:--")
+                LightCell(labels["Midnight"] ?: "Midnight", Digits.localize(snapshot.timings["Midnight"] ?: "--:--", language))
             }
         }
     }
