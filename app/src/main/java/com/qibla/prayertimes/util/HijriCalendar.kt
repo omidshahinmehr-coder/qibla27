@@ -7,13 +7,28 @@ data class HijriApprox(val year: Int, val month: Int, val day: Int) {
     companion object {
         // Shared by Persian and Arabic — both languages use the same Hijri month names.
         private val MONTH_NAMES_AR = listOf(
-            "محرم", "صفر", "ربیع‌الاول", "ربیع‌الثانی", "جمادی‌الاول", "جمادی‌الثانی",
-            "رجب", "شعبان", "رمضان", "شوال", "ذی‌القعده", "ذی‌الحجه"
+            "محرم", "صفر", "ربیع الاول", "ربیع الثانی", "جمادی الاول", "جمادی الثانی",
+            "رجب", "شعبان", "رمضان", "شوال", "ذیقعده", "ذیحجه"
+        )
+        // True Arabic spellings, used when the app language is Arabic.
+          private val MONTH_NAMES_ARABIC = listOf(
+            "محرم", "صفر", "ربيع أول", "ربيع آخر", "جمادى أولى", "جمادى آخرة",
+            "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"
         )
         private val MONTH_NAMES_EN = listOf(
-            "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani", "Jumada al-Awwal", "Jumada al-Thani",
-            "Rajab", "Shaban", "Ramadan", "Shawwal", "Dhu al-Qidah", "Dhu al-Hijjah"
+            "Muharram", "Safar", "Rabi I", "Rabi II", "Jumada I", "Jumada II",
+            "Rajab", "Shaban", "Ramadan", "Shawwal", "Dhu Qadah", "Dhu Hijjah"
         )
+
+        /** Hijri month name (month = 1..12) for app language "fa", "ar" or anything else (English). */
+        fun monthNameFor(month: Int, language: String): String {
+            val list = when (language) {
+                "fa" -> MONTH_NAMES_AR
+                "ar" -> MONTH_NAMES_ARABIC
+                else -> MONTH_NAMES_EN
+            }
+            return list.getOrElse(month - 1) { "" }
+        }
     }
 
     val monthNameAr: String get() = MONTH_NAMES_AR.getOrElse(month - 1) { "" }
@@ -21,7 +36,7 @@ data class HijriApprox(val year: Int, val month: Int, val day: Int) {
 
     /** Month name in whichever language is currently active (see [LocalePrefs.currentLanguage]). */
     fun monthName(context: Context): String =
-        if (LocalePrefs.currentLanguage(context) == "en") monthNameEn else monthNameAr
+        monthNameFor(month, LocalePrefs.currentLanguage(context))
 }
 
 /**
