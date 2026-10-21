@@ -37,7 +37,8 @@ fun EstedadText(
     val rv = RemoteViews(context.packageName, layoutRes)
     rv.setTextViewText(R.id.widget_text, text)
     rv.setTextColor(R.id.widget_text, color)
-    rv.setTextViewTextSize(R.id.widget_text, TypedValue.COMPLEX_UNIT_DIP, sizeSp  // dp, not sp: ignore the system font-size setting)
+    // dp, not sp: ignore the system font-size setting
+    rv.setTextViewTextSize(R.id.widget_text, TypedValue.COMPLEX_UNIT_DIP, sizeSp)
     rv.setInt(R.id.widget_text, "setGravity", gravityFor(align))
     if (maxLines != null) {
         rv.setInt(R.id.widget_text, "setMaxLines", maxLines)
