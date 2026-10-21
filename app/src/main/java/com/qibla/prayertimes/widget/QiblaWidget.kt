@@ -91,7 +91,12 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
             val hijriDisplayText = BidiText.forLanguage(snapshot.hijriText, language)
 
             val clockBlock: @Composable () -> Unit = {
-                AndroidRemoteViews(RemoteViews(langContext.packageName, R.layout.widget_clock))
+                AndroidRemoteViews(
+                    RemoteViews(
+                        langContext.packageName,
+                        if (Digits.usesNativeDigits(language)) R.layout.widget_clock_fa else R.layout.widget_clock
+                    )
+                )
             }
 
             val countdownLabelBlock: @Composable () -> Unit = {
@@ -132,7 +137,10 @@ private fun WidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
                         val nowElapsed = SystemClock.elapsedRealtime()
                         val nowWall = System.currentTimeMillis()
                         val base = nowElapsed + (countdown.second - nowWall)
-                        val rv = RemoteViews(langContext.packageName, R.layout.widget_countdown)
+                        val rv = RemoteViews(
+                            langContext.packageName,
+                            if (Digits.usesNativeDigits(language)) R.layout.widget_countdown_fa else R.layout.widget_countdown
+                        )
                         rv.setChronometer(R.id.widget_countdown_view, base, null, true)
                         AndroidRemoteViews(rv)
                     } else {
@@ -316,7 +324,7 @@ private fun PrayerCell(label: String, time: String) {
                 text = time,
                 style = TextStyle(
                     color = goldText,
-                    fontSize = fixedSp(16f),
+                    fontSize = fixedSp(17f),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
