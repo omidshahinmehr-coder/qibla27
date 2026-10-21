@@ -16,7 +16,7 @@ data class HijriApprox(val year: Int, val month: Int, val day: Int) {
             "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"
         )
         private val MONTH_NAMES_EN = listOf(
-            "Muharram", "Safar", "Rabi I", "Rabi II", "Jumada I", "Jumada II",
+            "Muharram", "Safar", "RabiAlaval", "RabiAlsani", "JumadiAlaval", "JumadiAlsani",
             "Rajab", "Shaban", "Ramadan", "Shawwal", "Dhu Qadah", "Dhu Hijjah"
         )
 
