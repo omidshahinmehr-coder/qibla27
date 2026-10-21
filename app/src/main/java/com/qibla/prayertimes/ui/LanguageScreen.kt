@@ -68,6 +68,7 @@ fun LanguageScreen(onBack: () -> Unit) {
                     .clickable {
                         current = code
                         LocalePrefs.set(context, code)
+                        com.qibla.prayertimes.widget.QiblaWidgetUpdater.requestUpdate(context.applicationContext)
                         (context as? Activity)?.recreate()
                     }
                     .padding(horizontal = 16.dp, vertical = 16.dp),
