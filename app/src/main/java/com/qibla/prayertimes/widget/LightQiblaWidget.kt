@@ -58,6 +58,12 @@ class LightQiblaWidget : GlanceAppWidget() {
 private fun LightWidgetContent(langContext: Context, snapshot: WidgetSnapshot?) {
 
     val labels = prayerLabels(langContext)
+    val config = langContext.resources.configuration
+    val language =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            config.locales[0].language
+        else
+            config.locale.language
 
     Column(
         modifier = GlanceModifier
@@ -94,7 +100,10 @@ private fun LightWidgetContent(langContext: Context, snapshot: WidgetSnapshot?) 
                     contentAlignment = Alignment.CenterStart
                 ) {
                     AndroidRemoteViews(
-                        RemoteViews(langContext.packageName, R.layout.widget_clock)
+                        RemoteViews(
+                            langContext.packageName,
+                            if (Digits.usesNativeDigits(language)) R.layout.widget_clock_fa else R.layout.widget_clock
+                        )
                     )
                 }
 
@@ -129,12 +138,6 @@ private fun LightWidgetContent(langContext: Context, snapshot: WidgetSnapshot?) 
             Spacer(modifier = GlanceModifier.height(1.dp))
 
             // ⭐ تاریخ + نام روز
-            val config = langContext.resources.configuration
-            val language =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    config.locales[0].language
-                else
-                    config.locale.language
 
             val weekday = weekdayName(language)
             val jalaliFull = BidiText.forLanguage("$weekday ${JalaliCalendar.today().format(language)}", language)
