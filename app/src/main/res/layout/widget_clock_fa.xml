@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Same as widget_clock, but uses a font whose 0-9 map to Persian digit glyphs, so the system-drawn
+     clock shows ۰۱۲۳... when the app language is Persian or Arabic. -->
+<TextClock xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_clock"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:format12Hour="h:mm:ss"
+    android:format24Hour="HH:mm:ss"
+    android:textColor="#8A6A2E"
+    android:textSize="26dp"
+    android:textStyle="bold"
+    android:fontFamily="@font/estedad_fadigits" />
