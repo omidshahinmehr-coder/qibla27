@@ -94,7 +94,8 @@ fun MonthlyTimesScreen(onBack: () -> Unit) {
                 SimpleDateFormat("MMMM yyyy", context.resources.configuration.locales[0]).format(cal.time)
             }
             CalendarMode.JALALI -> {
-                val monthName = com.qibla.prayertimes.util.JalaliDate(jYear, jMonth, 1).monthName
+                val monthName = com.qibla.prayertimes.util.JalaliDate(jYear, jMonth, 1)
+                    .monthName(com.qibla.prayertimes.util.LocalePrefs.currentLanguage(context))
                 "$monthName $jYear"
             }
         }
