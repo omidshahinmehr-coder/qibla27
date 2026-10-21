@@ -172,7 +172,7 @@ fun QiblaScreen(
 
             // Gregorian + Jalali + Hijri date, all three always shown together.
             val gregorianText = remember { SimpleDateFormat("d MMMM yyyy", Locale.ENGLISH).format(Date()) }
-            val jalaliText = remember { JalaliCalendar.today().toString() }
+            val jalaliText = remember { JalaliCalendar.today().format(com.qibla.prayertimes.util.LocalePrefs.currentLanguage(context)) }
             val hijriCorrectionDays by viewModel.hijriCorrectionDays.collectAsState()
             val eraSuffix = stringResource(R.string.hijri_era_suffix)
             // Prefer the Hijri date that came back with the prayer-times fetch — the online
@@ -205,11 +205,11 @@ fun QiblaScreen(
                     .padding(horizontal = 14.dp, vertical = 7.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(gregorianText, color = AmberText, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                Text(com.qibla.prayertimes.util.Digits.localize(gregorianText, com.qibla.prayertimes.util.LocalePrefs.currentLanguage(context)), color = AmberText, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(1.dp))
-                Text(jalaliText, color = AmberText, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                Text(com.qibla.prayertimes.util.Digits.localize(jalaliText, com.qibla.prayertimes.util.LocalePrefs.currentLanguage(context)), color = AmberText, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(1.dp))
-                Text(hijriText, color = AmberText, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                Text(com.qibla.prayertimes.util.Digits.localize(hijriText, com.qibla.prayertimes.util.LocalePrefs.currentLanguage(context)), color = AmberText, fontSize = 14.sp, fontWeight = FontWeight.Medium)
             }
 
             if (occasions.isNotEmpty()) {
