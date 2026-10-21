@@ -23,8 +23,11 @@ data class HijriDate(
     val monthNumber: Int
 ) {
     /** Month name in whichever language is currently active (see [LocalePrefs.currentLanguage]). */
-    fun monthName(context: Context): String =
-        if (LocalePrefs.currentLanguage(context) == "en") monthEn else monthAr
+    fun monthName(context: Context): String {
+        val lang = LocalePrefs.currentLanguage(context)
+        return if (monthNumber in 1..12) com.qibla.prayertimes.util.HijriApprox.monthNameFor(monthNumber, lang)
+        else if (lang == "en") monthEn else monthAr
+    }
 }
 
 data class PrayerTimesResult(
