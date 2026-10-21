@@ -42,6 +42,9 @@ class WidgetDataStore(context: Context) {
         // offline calculation shifted the same way — so the widget always agrees with the
         // app's home screen and the Hijri-correction screen, regardless of which source was used.
         val hijriText = hijri?.let { "${it.day} ${it.monthName(langContext)} ${it.year}$eraSuffix" } ?: ""
+        val hijriDay = hijri?.day?.toIntOrNull() ?: 0
+        val hijriYear = hijri?.year?.toIntOrNull() ?: 0
+        val hijriMonth = hijri?.monthNumber ?: 0
 
         val timingsJson = JSONObject()
         timings.forEach { (k, v) -> timingsJson.put(k, v) }
@@ -50,6 +53,9 @@ class WidgetDataStore(context: Context) {
             .putString(KEY_CITY, cityName)
             .putString(KEY_TIMINGS, timingsJson.toString())
             .putString(KEY_HIJRI_TEXT, hijriText)
+            .putInt(KEY_HIJRI_DAY, hijriDay)
+            .putInt(KEY_HIJRI_MONTH, hijriMonth)
+            .putInt(KEY_HIJRI_YEAR, hijriYear)
             .putString(KEY_JALALI_TEXT, jalali)
             .putString(KEY_DATE_KEY, todayKey)
             .putBoolean(KEY_OFFLINE, isOffline)
@@ -70,7 +76,18 @@ class WidgetDataStore(context: Context) {
         val city = prefs.getString(KEY_CITY, null) ?: return null
         val timingsRaw = prefs.getString(KEY_TIMINGS, null) ?: return null
         val dateKey = prefs.getString(KEY_DATE_KEY, "") ?: ""
-        val hijriText = prefs.getString(KEY_HIJRI_TEXT, "") ?: ""
+        var hijriText = prefs.getString(KEY_HIJRI_TEXT, "") ?: ""
+        // Rebuild from the stored parts in the app's *current* language, so a language change
+        // is reflected without waiting for the next prayer-times refresh.
+        val hDay = prefs.getInt(KEY_HIJRI_DAY, 0)
+        val hMonth = prefs.getInt(KEY_HIJRI_MONTH, 0)
+        val hYear = prefs.getInt(KEY_HIJRI_YEAR, 0)
+        if (hDay > 0 && hMonth in 1..12 && hYear > 0) {
+            val langContext = LocalePrefs.wrap(appContext)
+            val lang = LocalePrefs.currentLanguage(appContext)
+            hijriText = "$hDay ${com.qibla.prayertimes.util.HijriApprox.monthNameFor(hMonth, lang)} $hYear" +
+                langContext.getString(R.string.hijri_era_suffix)
+        }
         val jalaliText = prefs.getString(KEY_JALALI_TEXT, "") ?: ""
         val isOffline = prefs.getBoolean(KEY_OFFLINE, false)
 
@@ -96,6 +113,9 @@ class WidgetDataStore(context: Context) {
         private const val KEY_CITY = "city_name"
         private const val KEY_TIMINGS = "timings_json"
         private const val KEY_HIJRI_TEXT = "hijri_text"
+        private const val KEY_HIJRI_DAY = "hijri_day"
+        private const val KEY_HIJRI_MONTH = "hijri_month"
+        private const val KEY_HIJRI_YEAR = "hijri_year"
         private const val KEY_JALALI_TEXT = "jalali_text"
         private const val KEY_DATE_KEY = "date_key"
         private const val KEY_OFFLINE = "is_offline"
