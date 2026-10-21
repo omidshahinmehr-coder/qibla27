@@ -4,15 +4,37 @@ import java.util.Calendar
 
 data class JalaliDate(val year: Int, val month: Int, val day: Int) {
     companion object {
-        private val MONTH_NAMES = listOf(
+        private val MONTH_NAMES_FA = listOf(
             "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
             "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
         )
+        private val MONTH_NAMES_AR = listOf(
+            "فروردين", "أرديبهشت", "خرداد", "تير", "مرداد", "شهريور",
+            "مهر", "آبان", "آذر", "دي", "بهمن", "إسفند"
+        )
+        private val MONTH_NAMES_EN = listOf(
+            "Farvardin", "Ordibehesht", "Khordad", "Tir", "Mordad", "Shahrivar",
+            "Mehr", "Aban", "Azar", "Dey", "Bahman", "Esfand"
+        )
     }
 
-    val monthName: String get() = MONTH_NAMES.getOrElse(month - 1) { "" }
+    /** Persian month name (kept for callers that always want Persian). */
+    val monthName: String get() = MONTH_NAMES_FA.getOrElse(month - 1) { "" }
 
-    override fun toString(): String = "$day $monthName $year"
+    /** Month name in [language] ("fa", "ar"; anything else gives the English transliteration). */
+    fun monthName(language: String): String {
+        val names = when (language) {
+            "fa" -> MONTH_NAMES_FA
+            "ar" -> MONTH_NAMES_AR
+            else -> MONTH_NAMES_EN
+        }
+        return names.getOrElse(month - 1) { "" }
+    }
+
+    /** "day month year" with the month in [language]. */
+    fun format(language: String): String = "$day ${monthName(language)} $year"
+
+    override fun toString(): String = format("fa")
 }
 
 /**
